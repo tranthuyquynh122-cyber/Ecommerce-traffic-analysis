@@ -40,7 +40,6 @@ Specifically, this project aims to:
 
 This project is designed for:
 
-✔️ Data Analysts / Business Analysts  
 ✔️ Marketing Analysts  
 ✔️ Growth & Performance teams  
 ✔️ E-commerce stakeholders  
@@ -125,7 +124,6 @@ Before performing any analysis, the raw Google Analytics data must be cleaned an
 
 The following data preparation steps were applied:
 
-- Filtered data by specific time ranges using `_TABLE_SUFFIX`
 - Parsed `date` from string format (`YYYYMMDD`) into a usable date format
 - Flattened nested fields (`hits`, `hits.product`) using `UNNEST()`
 - Removed records with null revenue when analyzing purchase behavior
