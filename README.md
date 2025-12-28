@@ -74,7 +74,29 @@ This table contains session-level Google Analytics data with nested structures t
 
 ### 2️⃣ Table Schema & Data Snapshot  
 
-<img width="1596" height="678" alt="image" src="https://github.com/user-attachments/assets/9aaeeee2-4166-41bb-825e-c04ce0612195" />
+### 📊 Key Fields Used (Schema Overview)
+
+| Field Name | Data Type | Description |
+|-----------|-----------|-------------|
+| fullVisitorId | STRING | Unique identifier for each visitor. |
+| date | STRING | Session date in `YYYYMMDD` format. |
+| totals | RECORD | Aggregated metrics at the session level. |
+| totals.bounces | INTEGER | Indicates a bounced session (1 = bounce, null otherwise). |
+| totals.hits | INTEGER | Total number of hits within the session. |
+| totals.pageviews | INTEGER | Total number of pageviews within the session. |
+| totals.visits | INTEGER | Number of sessions (1 if interaction exists, otherwise null). |
+| totals.transactions | INTEGER | Total number of ecommerce transactions in the session. |
+| trafficSource.source | STRING | Traffic acquisition source (e.g. search engine, referral, UTM source). |
+| hits | RECORD | Nested hit-level data containing user interactions. |
+| hits.eCommerceAction | RECORD | Contains ecommerce actions performed during the session. |
+| hits.eCommerceAction.action_type | STRING | Type of ecommerce action (view, add to cart, purchase, etc.). |
+| hits.product | RECORD | Nested product-level information. |
+| hits.product.productQuantity | INTEGER | Quantity of the product purchased. |
+| hits.product.productRevenue | INTEGER | Product revenue in micro-units (must be divided by 1,000,000). |
+| hits.product.productSKU | STRING | Unique product SKU identifier. |
+| hits.product.v2ProductName | STRING | Product name. |
+| device.deviceCategory | STRING | Device category (Desktop, Mobile, Tablet). |
+
 
 ---
 
