@@ -16,17 +16,11 @@ Date: 2025-07
 1. 📌 [Background & Overview](#background-overview)
 2. 📂 [Dataset Description & Data Structure](#dataset-description--data-structure)
 3. 📊 [Final Conclusion & Recommendations](#final-conclusion--recommendations)
-<a id="background-overview"></a>
-## 📌 Background & Overview
-<a id="dataset-description--data-structure"></a>
-## 📂 Dataset Description & Data Structure
-<a id="final-conclusion--recommendations"></a>
-## 📊 Final Conclusion & Recommendations
-
 
 ---
 
-## 📌 Background & Overview  
+<a id="background-overview"></a>
+## 📌 Background & Overview
 
 ### 📖 Project Objective  
 
@@ -54,7 +48,8 @@ This project is designed for:
 
 ---
 
-## 📂 Dataset Description & Data Structure  
+<a id="dataset-description--data-structure"></a>
+## 📂 Dataset Description & Data Structure
 
 ### 📌 Data Source  
 
@@ -314,7 +309,8 @@ The goal is to identify where users drop off and where optimization is most need
 
 
 
-## 📊 Final Conclusion & Recommendations  
+<a id="final-conclusion--recommendations"></a>
+## 📊 Final Conclusion & Recommendations 
 
 ### 📍 Key Insights  
 
