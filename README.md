@@ -99,22 +99,6 @@ This table contains session-level Google Analytics data with nested structures t
 
 ---
 
-### 🔎 Notes on Data Structure  
-
-- The dataset uses a **nested schema**:
-  - One user → multiple sessions  
-  - Each session → multiple hits  
-  - Each hit → optional product-level data  
-
-- Nested fields are flattened using `UNNEST()` during analysis.
-
-- Revenue values are stored in **micro-units**, so they must be divided by `1,000,000` to convert to standard currency.
-
-- Ecommerce actions are encoded as:
-  - `2` → Product View  
-  - `3` → Add to Cart  
-  - `6` → Purchase  
-
 
 ## ⚒️ Main Process
 
