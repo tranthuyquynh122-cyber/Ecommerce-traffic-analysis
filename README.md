@@ -6,8 +6,8 @@ How do user traffic, engagement, and purchasing behavior evolve over time, and h
 **Domain:** E-commerce / Digital Marketing Analytics  
 **Tools Used:** SQL (Google BigQuery)  
 
-Author: Your Name  
-Date: 2017-XX-XX  
+Author: Tran Thuy Quynh  
+Date: 2025-07
 
 ---
 
@@ -156,7 +156,7 @@ A stable or growing trend may indicate healthy acquisition performance, while fl
 - Total pageviews  
 - Total transactions  
 
-📌 <img width="886" height="233" alt="image" src="https://github.com/user-attachments/assets/b353c9b5-c50d-45db-940b-29bd973149a3" />
+📌 <img width="786" height="142" alt="image" src="https://github.com/user-attachments/assets/aad5e558-dd09-4570-ad92-8dc984067080" />
 
 
 **Key observations:**
@@ -175,6 +175,139 @@ Bounce rate represents the percentage of sessions in which users leave the websi
 Analyzing bounce rate by traffic source helps identify which acquisition channels bring high-quality users versus low-engagement traffic.
 
 **Metric definition:**
+Bounce Rate = (Total Bounces / Total Visits) × 100
+
+📌 <img width="795" height="202" alt="image" src="https://github.com/user-attachments/assets/a2f30931-197c-4736-8d63-330676f15105" />
+
+
+**Key observations:**
+- Bounce rates vary significantly across traffic sources.
+- Some channels generate high traffic but low engagement.
+- Results help prioritize marketing optimization efforts.
+
+---
+
+### ✅ Task 3: Revenue by Traffic Source (Weekly & Monthly – June 2017)
+
+**Purpose & Business Meaning**
+
+This task evaluates how much revenue each traffic source contributes over time. Unlike traffic volume, revenue reflects real business value and helps distinguish high-quality acquisition channels.
+
+Revenue is analyzed at both monthly and weekly levels to capture long-term trends and short-term campaign effects.
+
+📌 <img width="988" height="201" alt="image" src="https://github.com/user-attachments/assets/f4c01c8f-0d11-4ff2-8881-8cd94fc1351a" />
+
+
+**Key observations:**
+- Certain traffic sources consistently outperform others in revenue.
+- Weekly analysis reveals short-term spikes linked to promotions or campaigns.
+- Enables comparison between volume-driven vs value-driven channels.
+
+---
+
+### ✅ Task 4: Average Pageviews — Purchasers vs Non-Purchasers (Jun–Jul 2017)
+
+**Purpose & Business Meaning**
+
+This analysis compares engagement behavior between users who completed a purchase and those who did not. Pageviews serve as a proxy for user interest and exploration depth.
+
+Higher pageviews often indicate stronger purchase intent.
+
+**Metric:**
+Average pageviews = Total pageviews / Number of users
+
+
+📌 <img width="776" height="102" alt="image" src="https://github.com/user-attachments/assets/94d88b77-6904-4b4d-9a82-60a9ab592180" />
+
+
+**Key observations:**
+- Purchasers tend to view significantly more pages than non-purchasers.
+- Deeper engagement strongly correlates with conversion likelihood.
+- Improving navigation and product discovery may increase conversions.
+
+---
+
+### ✅ Task 5: Average Number of Transactions per Purchasing User (July 2017)
+
+**Purpose & Business Meaning**
+
+This task measures how frequently users who made at least one purchase complete transactions within the period.
+
+It helps distinguish between one-time buyers and repeat customers.
+
+**Metric:**
+Average transactions per user = Total transactions / Number of purchasing users
+
+
+📌 <img width="431" height="61" alt="image" src="https://github.com/user-attachments/assets/a72fef1b-a8da-4569-94d7-a0140cb8f251" />
+
+
+**Key observations:**
+- Identifies repeat-purchase behavior.
+- Useful for customer retention and loyalty analysis.
+- Indicates whether revenue growth is driven by frequency or customer volume.
+
+---
+
+### ✅ Task 6: Average Revenue per Visit (Purchasers Only – July 2017)
+
+**Purpose & Business Meaning**
+
+This analysis evaluates monetization efficiency by measuring how much revenue is generated per visit among purchasing users.
+
+**Metric:**
+Average revenue per visit = Total revenue / Total visits
+
+
+📌 <img width="424" height="68" alt="image" src="https://github.com/user-attachments/assets/31b848ef-50e7-4dce-82af-905bb9a0659f" />
+
+**Key observations:**
+- Reflects overall monetization effectiveness.
+- Useful KPI for evaluating marketing ROI.
+- Can guide pricing, promotion, and upselling strategies.
+
+---
+
+### ✅ Task 7: Cross-Sell Analysis  
+**Other products purchased together with “YouTube Men's Vintage Henley”**
+
+**Purpose & Business Meaning**
+
+This analysis identifies products frequently purchased together with a specific product. Such insights are commonly used for recommendation systems and bundle creation.
+
+📌 <img width="606" height="202" alt="image" src="https://github.com/user-attachments/assets/9474fe0f-52d5-4c57-ad5b-9c8e3c970d0d" />
+
+
+**Key observations:**
+- Reveals product affinity patterns.
+- Supports “Frequently Bought Together” recommendations.
+- Useful for bundle and cross-selling strategies.
+
+---
+
+### ✅ Task 8: Conversion Funnel Analysis (Jan–Mar 2017)
+
+**Purpose & Business Meaning**
+
+This task evaluates how users progress through the e-commerce funnel:
+
+1. Product View  
+2. Add to Cart  
+3. Purchase  
+
+The goal is to identify where users drop off and where optimization is most needed.
+
+**Metrics calculated:**
+- Add-to-cart rate  
+- Purchase rate  
+
+📌 <img width="946" height="134" alt="image" src="https://github.com/user-attachments/assets/e92230f4-247c-41eb-a962-1364d8d74421" />
+
+
+**Key observations:**
+- Significant drop-offs occur between funnel stages.
+- Indicates friction in product pages or checkout flow.
+- Helps prioritize UX and conversion optimization efforts.
 
 
 
@@ -196,6 +329,9 @@ Analyzing bounce rate by traffic source helps identify which acquisition channel
 
 ---
 
+
+
+
 ### ✅ Business Recommendations  
 
 1. **Optimize low-quality traffic sources**  
@@ -214,5 +350,3 @@ Analyzing bounce rate by traffic source helps identify which acquisition channel
    Use product co-purchase insights to recommend related items and increase average order value.
 
 ---
-
-✅ *This project demonstrates strong SQL querying skills, structured analytical thinking, and the ability to translate raw web analytics data into actionable business insights.*
