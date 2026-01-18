@@ -168,7 +168,7 @@ FROM `bigquery-public-data.google_analytics_sample.ga_sessions_2017*`
 WHERE _TABLE_SUFFIX BETWEEN '0101' AND '0331'
 GROUP BY month
 ORDER BY month;
-
+```
 
 
 📌 <img width="786" height="142" alt="image" src="https://github.com/user-attachments/assets/aad5e558-dd09-4570-ad92-8dc984067080" />
