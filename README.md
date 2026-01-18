@@ -158,14 +158,13 @@ A stable or growing trend may indicate healthy acquisition performance, while fl
 - Total pageviews  
 - Total transactions
 
-```sql
-SELECT
+```SELECT
   FORMAT_DATE('%Y%m', PARSE_DATE('%Y%m%d', date)) AS month,
   COUNT(DISTINCT fullVisitorId) AS visits,
   SUM(totals.pageviews) AS pageviews,
   SUM(totals.transactions) AS transactions
-FROM `bigquery-public-data.google_analytics_sample.ga_sessions_2017*`
-WHERE _TABLE_SUFFIX BETWEEN '0101' AND '0331'
+FROM`bigquery-public-data.google_analytics_sample.ga_sessions_2017*`
+WHERE _TABLE_SUFFIX BETWEEN '0101' AND '0331' 
 GROUP BY month
 ORDER BY month;
 ```
@@ -191,6 +190,23 @@ Analyzing bounce rate by traffic source helps identify which acquisition channel
 
 **Metric definition:**
 Bounce Rate = (Total Bounces / Total Visits) × 100
+```WITH source_s AS (
+  SELECT
+    trafficSource.source AS source,
+    COUNT(fullVisitorId) AS total_visits,
+    SUM(CASE WHEN totals.bounces = 1 THEN 1 ELSE 0 END) AS total_no_of_bounces
+  FROM `bigquery-public-data.google_analytics_sample.ga_sessions_201707*`
+  GROUP BY source
+)
+
+SELECT
+  source,
+  total_visits,
+  total_no_of_bounces,
+  ROUND(SAFE_DIVIDE(total_no_of_bounces, total_visits) * 100, 2) AS bounce_rate
+FROM source_s
+ORDER BY total_visits DESC;
+```
 
 📌 <img width="795" height="202" alt="image" src="https://github.com/user-attachments/assets/a2f30931-197c-4736-8d63-330676f15105" />
 
@@ -209,6 +225,36 @@ Bounce Rate = (Total Bounces / Total Visits) × 100
 This task evaluates how much revenue each traffic source contributes over time. Unlike traffic volume, revenue reflects real business value and helps distinguish high-quality acquisition channels.
 
 Revenue is analyzed at both monthly and weekly levels to capture long-term trends and short-term campaign effects.
+```WITH monthly_revenue AS (
+  SELECT
+    'Month' AS time_type,
+    FORMAT_DATE('%Y-%m', PARSE_DATE('%Y%m%d', date)) AS time,
+    trafficSource.source AS source,
+    SAFE_DIVIDE(SUM(product.productRevenue), 1000000) AS revenue
+  FROM `bigquery-public-data.google_analytics_sample.ga_sessions_201706*`,
+    UNNEST(hits) AS hits,
+    UNNEST(hits.product) AS product
+  WHERE product.productRevenue IS NOT NULL
+  GROUP BY source, time
+),
+
+weekly_revenue AS (
+  SELECT
+    'Week' AS time_type,
+    FORMAT_DATE('%Y-%W', PARSE_DATE('%Y%m%d', date)) AS time,
+    trafficSource.source AS source,
+    SAFE_DIVIDE(SUM(product.productRevenue), 1000000) AS revenue
+  FROM`bigquery-public-data.google_analytics_sample.ga_sessions_201706*`,
+    UNNEST(hits) AS hits,
+    UNNEST(hits.product) AS product
+  WHERE product.productRevenue IS NOT NULL
+  GROUP BY source, time
+)
+SELECT * FROM monthly_revenue
+UNION ALL
+SELECT * FROM weekly_revenue
+ORDER BY revenue DESC;
+```
 
 📌 <img width="988" height="201" alt="image" src="https://github.com/user-attachments/assets/f4c01c8f-0d11-4ff2-8881-8cd94fc1351a" />
 
@@ -230,7 +276,41 @@ Higher pageviews often indicate stronger purchase intent.
 
 **Metric:**
 Average pageviews = Total pageviews / Number of users
+```WITH raw_data AS (
+  SELECT
+    FORMAT_DATE('%Y-%m', PARSE_DATE('%Y%m%d', date)) AS month,
+    fullVisitorId,
+    totals.pageviews AS pageviews,
+    CASE
+      WHEN totals.transactions >= 1 AND product.productRevenue IS NOT NULL THEN 'purchaser'
+      WHEN totals.transactions IS NULL AND product.productRevenue IS NULL THEN 'non_purchaser'
+      ELSE NULL
+    END AS purchaser_type
+  FROM `bigquery-public-data.google_analytics_sample.ga_sessions_2017*`,
+    UNNEST(hits) AS hits,
+    UNNEST(hits.product) AS product
+  WHERE _TABLE_SUFFIX BETWEEN '0601' AND '0731'
+    AND totals.pageviews IS NOT NULL
+)
+,aggregated AS (
+  SELECT
+    month,
+    purchaser_type,
+    COUNT(DISTINCT fullVisitorId) AS unique_users,
+    SUM(pageviews) AS total_pageviews,
+    SAFE_DIVIDE(SUM(pageviews), COUNT(DISTINCT fullVisitorId)) AS avg_pageviews
+  FROM raw_data
+  WHERE purchaser_type IS NOT NULL
+  GROUP BY month, purchaser_type
+)
 
+SELECT month,
+  ROUND(MAX(CASE WHEN purchaser_type = 'purchaser' THEN avg_pageviews END), 2) AS avg_pageviews_purchase,
+  ROUND(MAX(CASE WHEN purchaser_type = 'non_purchaser' THEN avg_pageviews END), 2) AS avg_pageviews_non_purchase
+FROM aggregated
+GROUP BY month
+ORDER BY month;
+```
 
 📌 <img width="776" height="102" alt="image" src="https://github.com/user-attachments/assets/94d88b77-6904-4b4d-9a82-60a9ab592180" />
 
@@ -252,7 +332,25 @@ It helps distinguish between one-time buyers and repeat customers.
 
 **Metric:**
 Average transactions per user = Total transactions / Number of purchasing users
+```WITH purchasers AS (
+  SELECT
+    FORMAT_DATE('%Y%m', PARSE_DATE('%Y%m%d', date)) AS month,
+    fullVisitorId,
+    totals.transactions
+  FROM `bigquery-public-data.google_analytics_sample.ga_sessions_2017*`,
+    UNNEST(hits) AS hits,
+    UNNEST(hits.product) AS product
+  WHERE _TABLE_SUFFIX BETWEEN '0701' AND '0731'
+    AND totals.transactions IS NOT NULL
+    AND product.productRevenue IS NOT NULL
+)
 
+SELECT
+  month,
+  ROUND(SAFE_DIVIDE(SUM(transactions), COUNT(DISTINCT fullVisitorId)), 2) AS avg_total_transactions_per_user
+FROM purchasers
+GROUP BY month;
+```
 
 📌 <img width="431" height="61" alt="image" src="https://github.com/user-attachments/assets/a72fef1b-a8da-4569-94d7-a0140cb8f251" />
 
@@ -272,7 +370,25 @@ This analysis evaluates monetization efficiency by measuring how much revenue is
 
 **Metric:**
 Average revenue per visit = Total revenue / Total visits
+```WITH sessions AS (
+  SELECT
+    PARSE_DATE('%Y%m%d', date) AS session_date,
+    totals.visits AS visits,
+    product.productRevenue AS productRevenue
+  FROM `bigquery-public-data.google_analytics_sample.ga_sessions_201707*`,
+    UNNEST(hits) AS hits,
+    UNNEST(hits.product) AS product
+  WHERE totals.transactions IS NOT NULL
+    AND product.productRevenue IS NOT NULL
+)
 
+SELECT
+  FORMAT_DATE('%Y%m', session_date) AS month,
+  ROUND(SAFE_DIVIDE(SUM(productRevenue) / 1000000, SUM(visits)), 2) AS avg_revenue_by_user_per_visit
+FROM sessions
+GROUP BY month
+ORDER BY month;
+```
 
 📌 <img width="424" height="68" alt="image" src="https://github.com/user-attachments/assets/31b848ef-50e7-4dce-82af-905bb9a0659f" />
 
@@ -289,6 +405,32 @@ Average revenue per visit = Total revenue / Total visits
 **Purpose & Business Meaning**
 
 This analysis identifies products frequently purchased together with a specific product. Such insights are commonly used for recommendation systems and bundle creation.
+```WITH buyers AS (
+  SELECT fullVisitorId
+  FROM `bigquery-public-data.google_analytics_sample.ga_sessions_201707*`,
+    UNNEST(hits) AS hits,
+    UNNEST(hits.product) AS product
+  WHERE product.v2ProductName = "YouTube Men's Vintage Henley"
+    AND product.productRevenue IS NOT NULL
+    AND totals.transactions >= 1
+)
+
+SELECT
+  product.v2ProductName AS product_name,
+  SUM(product.productQuantity) AS total_quantity_ordered
+FROM `bigquery-public-data.google_analytics_sample.ga_sessions_201707*`,
+  UNNEST(hits) AS hits,
+  UNNEST(hits.product) AS product
+WHERE fullVisitorId IN 
+  (SELECT fullVisitorId 
+  FROM buyers)
+  AND product.productRevenue IS NOT NULL
+  AND totals.transactions >= 1
+  AND product.v2ProductName <> "YouTube Men's Vintage Henley"
+GROUP BY product_name
+ORDER BY total_quantity_ordered DESC;
+
+```
 
 📌 <img width="606" height="202" alt="image" src="https://github.com/user-attachments/assets/9474fe0f-52d5-4c57-ad5b-9c8e3c970d0d" />
 
@@ -315,7 +457,31 @@ The goal is to identify where users drop off and where optimization is most need
 **Metrics calculated:**
 - Add-to-cart rate  
 - Purchase rate  
+```WITH raw_data AS (
+  SELECT
+    PARSE_DATE('%Y%m%d', date) AS full_date,
+    FORMAT_DATE('%Y%m', PARSE_DATE('%Y%m%d', date)) AS month,
+    CAST(hits.eCommerceAction.action_type AS INT) AS action_type,
+    product.productRevenue
+  FROM `bigquery-public-data.google_analytics_sample.ga_sessions_2017*`,
+    UNNEST(hits) AS hits,
+    UNNEST(hits.product) AS product
+  WHERE _TABLE_SUFFIX BETWEEN '0101' AND '0331' 
+    AND CAST(hits.eCommerceAction.action_type AS INT) IN (2, 3, 6)
+)
 
+SELECT
+  month,
+  SUM(CASE WHEN action_type = 2 THEN 1 ELSE 0 END) AS num_product_view,
+  SUM(CASE WHEN action_type = 3 THEN 1 ELSE 0 END) AS num_addtocart,
+  SUM(CASE WHEN action_type = 6 AND productRevenue IS NOT NULL THEN 1 ELSE 0 END) AS num_purchase,
+  ROUND(SAFE_DIVIDE(SUM(CASE WHEN action_type = 3 THEN 1 ELSE 0 END) * 100, SUM(CASE WHEN action_type = 2 THEN 1 ELSE 0 END)), 2) AS add_to_cart_rate,
+  ROUND(SAFE_DIVIDE(SUM(CASE WHEN action_type = 6 AND productRevenue IS NOT NULL THEN 1 ELSE 0 END) * 100, SUM(CASE WHEN action_type = 2 THEN 1 ELSE 0 END)), 2) AS purchase_rate
+FROM raw_data
+GROUP BY month
+ORDER BY month;
+
+```
 📌 <img width="946" height="134" alt="image" src="https://github.com/user-attachments/assets/e92230f4-247c-41eb-a962-1364d8d74421" />
 
 
