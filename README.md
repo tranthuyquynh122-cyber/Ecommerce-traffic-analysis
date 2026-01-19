@@ -158,7 +158,8 @@ A stable or growing trend may indicate healthy acquisition performance, while fl
 - Total pageviews  
 - Total transactions
 
-```SELECT
+```sql
+SELECT
   FORMAT_DATE('%Y%m', PARSE_DATE('%Y%m%d', date)) AS month,
   COUNT(DISTINCT fullVisitorId) AS visits,
   SUM(totals.pageviews) AS pageviews,
