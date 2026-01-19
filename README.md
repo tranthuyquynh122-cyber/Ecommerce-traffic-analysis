@@ -191,7 +191,8 @@ Analyzing bounce rate by traffic source helps identify which acquisition channel
 
 **Metric definition:**
 Bounce Rate = (Total Bounces / Total Visits) × 100
-```WITH source_s AS (
+```sql
+WITH source_s AS (
   SELECT
     trafficSource.source AS source,
     COUNT(fullVisitorId) AS total_visits,
@@ -226,7 +227,8 @@ ORDER BY total_visits DESC;
 This task evaluates how much revenue each traffic source contributes over time. Unlike traffic volume, revenue reflects real business value and helps distinguish high-quality acquisition channels.
 
 Revenue is analyzed at both monthly and weekly levels to capture long-term trends and short-term campaign effects.
-```WITH monthly_revenue AS (
+```sql
+WITH monthly_revenue AS (
   SELECT
     'Month' AS time_type,
     FORMAT_DATE('%Y-%m', PARSE_DATE('%Y%m%d', date)) AS time,
@@ -277,7 +279,8 @@ Higher pageviews often indicate stronger purchase intent.
 
 **Metric:**
 Average pageviews = Total pageviews / Number of users
-```WITH raw_data AS (
+```sql
+WITH raw_data AS (
   SELECT
     FORMAT_DATE('%Y-%m', PARSE_DATE('%Y%m%d', date)) AS month,
     fullVisitorId,
@@ -333,7 +336,8 @@ It helps distinguish between one-time buyers and repeat customers.
 
 **Metric:**
 Average transactions per user = Total transactions / Number of purchasing users
-```WITH purchasers AS (
+```sql
+WITH purchasers AS (
   SELECT
     FORMAT_DATE('%Y%m', PARSE_DATE('%Y%m%d', date)) AS month,
     fullVisitorId,
@@ -371,7 +375,8 @@ This analysis evaluates monetization efficiency by measuring how much revenue is
 
 **Metric:**
 Average revenue per visit = Total revenue / Total visits
-```WITH sessions AS (
+```sql
+WITH sessions AS (
   SELECT
     PARSE_DATE('%Y%m%d', date) AS session_date,
     totals.visits AS visits,
@@ -406,7 +411,8 @@ ORDER BY month;
 **Purpose & Business Meaning**
 
 This analysis identifies products frequently purchased together with a specific product. Such insights are commonly used for recommendation systems and bundle creation.
-```WITH buyers AS (
+```sql
+WITH buyers AS (
   SELECT fullVisitorId
   FROM `bigquery-public-data.google_analytics_sample.ga_sessions_201707*`,
     UNNEST(hits) AS hits,
@@ -458,7 +464,8 @@ The goal is to identify where users drop off and where optimization is most need
 **Metrics calculated:**
 - Add-to-cart rate  
 - Purchase rate  
-```WITH raw_data AS (
+```sql
+WITH raw_data AS (
   SELECT
     PARSE_DATE('%Y%m%d', date) AS full_date,
     FORMAT_DATE('%Y%m', PARSE_DATE('%Y%m%d', date)) AS month,
